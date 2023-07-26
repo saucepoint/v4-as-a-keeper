@@ -15,7 +15,7 @@ import {Counter} from "../src/Counter.sol";
 import {CounterImplementation} from "./implementation/CounterImplementation.sol";
 import {AtomicArb} from "../src/AtomicArb.sol";
 
-contract CounterTest is HookTest, Deployers, GasSnapshot {
+contract AtomicArbTest is HookTest, Deployers, GasSnapshot {
     using PoolIdLibrary for IPoolManager.PoolKey;
     using CurrencyLibrary for Currency;
 
@@ -68,18 +68,19 @@ contract CounterTest is HookTest, Deployers, GasSnapshot {
         swap(key0, 2e18, true); // 2e18, sell token0 for token1
 
         // arbitrage: buy token1 on key1, sell token1 on key0
+        // taking token0 from the pool as profit
         arb.arb(
+            key1,
+            IPoolManager.SwapParams({
+                zeroForOne: true,
+                amountSpecified: 102,
+                sqrtPriceLimitX96: MIN_PRICE_LIMIT // unlimited impact
+            }),
             key0,
             IPoolManager.SwapParams({
                 zeroForOne: false,
                 amountSpecified: 100,
                 sqrtPriceLimitX96: MAX_PRICE_LIMIT // unlimited impact
-            }),
-            key1,
-            IPoolManager.SwapParams({
-                zeroForOne: true,
-                amountSpecified: 100,
-                sqrtPriceLimitX96: MIN_PRICE_LIMIT // unlimited impact
             })
         );
     }
