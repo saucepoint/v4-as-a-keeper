@@ -67,7 +67,7 @@ contract AtomicArbTest is HookTest, Deployers, GasSnapshot {
         // On the main pool, create price discrepancy
         swap(key0, 2e18, true); // 2e18, sell token0 for token1
 
-        // arbitrage: buy token1 on key1, sell token1 on key0
+        // arbitrage: buy token1 on key1 (cheap), sell token1 on key0
         // taking token0 from the pool as profit
         arb.arb(
             key1,
@@ -81,7 +81,8 @@ contract AtomicArbTest is HookTest, Deployers, GasSnapshot {
                 zeroForOne: false,
                 amountSpecified: 100,
                 sqrtPriceLimitX96: MAX_PRICE_LIMIT // unlimited impact
-            })
+            }),
+            true
         );
     }
 }
