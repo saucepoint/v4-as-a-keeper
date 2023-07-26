@@ -77,11 +77,6 @@ contract AtomicArbTest is HookTest, Deployers, GasSnapshot {
                 sqrtPriceLimitX96: MIN_PRICE_LIMIT // unlimited impact
             }),
             key0,
-            IPoolManager.SwapParams({
-                zeroForOne: false,
-                amountSpecified: 100,
-                sqrtPriceLimitX96: MAX_PRICE_LIMIT // unlimited impact
-            }),
             true
         );
     }
@@ -100,11 +95,6 @@ contract AtomicArbTest is HookTest, Deployers, GasSnapshot {
                 sqrtPriceLimitX96: MAX_PRICE_LIMIT // unlimited impact
             }),
             key0,
-            IPoolManager.SwapParams({
-                zeroForOne: true,
-                amountSpecified: 100,
-                sqrtPriceLimitX96: MIN_PRICE_LIMIT // unlimited impact
-            }),
             false
         );
     }

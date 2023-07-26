@@ -10,18 +10,20 @@ import {PoolId, PoolIdLibrary} from "@uniswap/v4-core/contracts/libraries/PoolId
 import {BalanceDelta} from "@uniswap/v4-core/contracts/types/BalanceDelta.sol";
 import {CurrencyLibrary, Currency} from "@uniswap/v4-core/contracts/libraries/CurrencyLibrary.sol";
 import {IERC20Minimal} from "@uniswap/v4-core/contracts/interfaces/external/IERC20Minimal.sol";
+import {TickMath} from "@uniswap/v4-core/contracts/libraries/TickMath.sol";
 
 contract AtomicArb is Test {
     using PoolIdLibrary for IPoolManager.PoolKey;
 
     IPoolManager public immutable manager;
+    uint160 public constant MIN_PRICE_LIMIT = TickMath.MIN_SQRT_RATIO + 1;
+    uint160 public constant MAX_PRICE_LIMIT = TickMath.MAX_SQRT_RATIO - 1;
 
     struct CallbackData {
         address sender;
         IPoolManager.PoolKey key0;
         IPoolManager.SwapParams params0;
         IPoolManager.PoolKey key1;
-        IPoolManager.SwapParams params1;
         bool takeToken0;
     }
 
@@ -33,11 +35,10 @@ contract AtomicArb is Test {
         IPoolManager.PoolKey calldata key0,
         IPoolManager.SwapParams calldata params0,
         IPoolManager.PoolKey calldata key1,
-        IPoolManager.SwapParams calldata params1,
         bool takeToken0
     ) external returns (BalanceDelta delta) {
         delta = abi.decode(
-            manager.lock(abi.encode(CallbackData(msg.sender, key0, params0, key1, params1, takeToken0))), (BalanceDelta)
+            manager.lock(abi.encode(CallbackData(msg.sender, key0, params0, key1, takeToken0))), (BalanceDelta)
         );
     }
 
@@ -47,7 +48,14 @@ contract AtomicArb is Test {
         CallbackData memory data = abi.decode(rawData, (CallbackData));
 
         BalanceDelta delta0 = manager.swap(data.key0, data.params0);
-        BalanceDelta delta1 = manager.swap(data.key1, data.params1);
+        BalanceDelta delta1 = manager.swap(
+            data.key1,
+            IPoolManager.SwapParams({
+                zeroForOne: !data.params0.zeroForOne,
+                amountSpecified: !data.params0.zeroForOne ? -delta0.amount0() : -delta0.amount1(),
+                sqrtPriceLimitX96: !data.params0.zeroForOne ? MIN_PRICE_LIMIT : MAX_PRICE_LIMIT
+            })
+        );
         BalanceDelta net = delta0 + delta1;
         settleTake(data.sender, data.key0.currency0, data.key0.currency1, !data.takeToken0, net);
 
