@@ -8,7 +8,7 @@ import {IPoolManager} from "@uniswap/v4-core/contracts/interfaces/IPoolManager.s
 import {PoolModifyPositionTest} from "@uniswap/v4-core/contracts/test/PoolModifyPositionTest.sol";
 import {PoolSwapTest} from "@uniswap/v4-core/contracts/test/PoolSwapTest.sol";
 import {PoolDonateTest} from "@uniswap/v4-core/contracts/test/PoolDonateTest.sol";
-import {Counter} from "../src/Counter.sol";
+import {Counter} from "../src/hooks/Counter.sol";
 import {CounterImplementation} from "../test/implementation/CounterImplementation.sol";
 
 /// @notice Forge script for deploying v4 & hooks to **anvil**

@@ -11,7 +11,7 @@ import {PoolId, PoolIdLibrary} from "@uniswap/v4-core/contracts/libraries/PoolId
 import {Deployers} from "@uniswap/v4-core/test/foundry-tests/utils/Deployers.sol";
 import {CurrencyLibrary, Currency} from "@uniswap/v4-core/contracts/libraries/CurrencyLibrary.sol";
 import {HookTest} from "./utils/HookTest.sol";
-import {Counter} from "../src/Counter.sol";
+import {Counter} from "../src/hooks/Counter.sol";
 import {CounterImplementation} from "./implementation/CounterImplementation.sol";
 
 contract CounterTest is HookTest, Deployers, GasSnapshot {
