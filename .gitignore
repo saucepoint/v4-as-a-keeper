@@ -14,3 +14,6 @@ docs/
 .env
 
 .vscode/settings.json
+
+# random personal notes file
+.randomscratchpad.md
