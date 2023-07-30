@@ -1,0 +1,4 @@
+polars==0.18.8
+web3==6.7.0
+matplotlib==3.7.2
+stochastic==0.6.0
