@@ -52,8 +52,14 @@ contract AnvilScript is Script {
         vm.startBroadcast();
         MockERC20 mockWETH = new MockERC20("Mock WETH", "MWETH", 18);
         MockERC20 mockUSDC = new MockERC20("Mock USDC", "MUSDC", 6);
-        mockWETH.mint(msg.sender, 1_000_000e18);
-        mockUSDC.mint(msg.sender, 2_000_000_000e6);
+
+        anvil_setCode(address(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2), address(mockWETH).code);
+        anvil_setCode(address(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48), address(mockUSDC).code);
+        mockWETH = MockERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
+        mockUSDC = MockERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
+
+        mockWETH.mint(msg.sender, 2 ** 128);
+        mockUSDC.mint(msg.sender, 2 ** 128);
 
         mockWETH.approve(address(manager), type(uint256).max);
         mockWETH.approve(address(positionRouter), type(uint256).max);
@@ -93,6 +99,20 @@ contract AnvilScript is Script {
                 bytes32 slot = writes[i];
                 vm.store(_hook, slot, vm.load(_implementation, slot));
             }
+        }
+    }
+
+    // courtesy of horsefacts
+    // https://github.com/farcasterxyz/contracts/blob/de8aa0723a5c83b5682fd6d3a1123ea5fced179e/script/Deploy.s.sol#L54
+    function anvil_setCode(address addr, bytes memory code) internal {
+        if (block.chainid == 31337) {
+            string[] memory command = new string[](5);
+            command[0] = "cast";
+            command[1] = "rpc";
+            command[2] = "anvil_setCode";
+            command[3] = vm.toString(addr);
+            command[4] = vm.toString(code);
+            vm.ffi(command);
         }
     }
 }
