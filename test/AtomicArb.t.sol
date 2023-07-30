@@ -98,4 +98,23 @@ contract AtomicArbTest is HookTest, Deployers, GasSnapshot {
             false
         );
     }
+
+    function test_arb_gas() public {
+        // On the main pool, create price discrepancy
+        swap(key0, 1e18, false); // sell token1 for token0
+
+        uint256 gasBefore = gasleft();
+        arb.arb(
+            key1,
+            IPoolManager.SwapParams({
+                zeroForOne: false,
+                amountSpecified: 102,
+                sqrtPriceLimitX96: MAX_PRICE_LIMIT // unlimited impact
+            }),
+            key0,
+            false
+        );
+        uint256 gasAfter = gasleft();
+        console.log("gas used: %d", gasBefore - gasAfter);
+    }
 }
