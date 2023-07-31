@@ -1,11 +1,10 @@
-# v4-template
+# v4-as-a-keeper
 
-### **A template for writing Uniswap v4 Hooks 🦄**
+### **Using Uniswap v4 Hooks 🦄 for keeper activity**
 
-[`Use this Template`](https://github.com/saucepoint/v4-template/generate)
+This repo is mostly a sandbox for measuring and testing "v4-as-a-keeper"
 
-1. The example hook [Counter.sol](src/Counter.sol) demonstrates the `beforeSwap()` and `afterSwap()` hooks
-2. The test template [Counter.t.sol](test/Counter.t.sol) preconfigures the v4 pool manager, test tokens, and test liquidity.
+The idea is using arbitrage between the dominant pool and the obscure pool to pay for execution (keeper jobs)
 
 <details>
 <summary>Refetch v3 data</summary>
@@ -28,27 +27,11 @@ cryo logs \
 
 ---
 
-### Local Development (Anvil)
-
 _requires [foundry](https://book.getfoundry.sh)_
 
 ```
 forge install
 forge test
-```
-
-Because v4 exceeds the bytecode limit of Ethereum and it's _business licensed_, we can only deploy & test hooks on [anvil](https://book.getfoundry.sh/anvil/).
-
-```bash
-# start anvil, with a larger code limit
-anvil --code-size-limit 30000
-
-# in a new terminal
-forge script script/Anvil.s.sol \
-    --rpc-url http://localhost:8545 \
-    --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
-    --code-size-limit 30000 \
-    --broadcast
 ```
 
 ---
